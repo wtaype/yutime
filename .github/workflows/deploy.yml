@@ -2,7 +2,7 @@ name: Deploy Yutime to GitHub Pages
 
 on:
   push:
-    branches:
+    branches: 
       - main # Publica lo más nuevo cuando actualizas la rama 'main'
     tags:
       - 'v*'   # Publica versiones etiquetadas (ej: v1.0, v2.3) cuando creas un tag
@@ -22,9 +22,10 @@ jobs:
         uses: actions/setup-node@v4 # Prepara Node.js, necesario para construir tu proyecto Vite
         with:
           node-version: '20' # Usamos una versión reciente de Node.js
+          cache: 'npm' # Activa el caché para dependencias de npm
 
       - name: Install dependencies
-        run: npm install # Instala todas las herramientas que tu proyecto necesita (como Vite)
+        run: npm ci # Usa 'ci' en lugar de 'install' para instalaciones más rápidas y consistentes
 
       - name: Determine Base URL and Output Directory
         id: paths # Este paso decide la dirección base y dónde poner los archivos
@@ -47,11 +48,12 @@ jobs:
         # Este comando construye tu página. Le decimos a Vite la dirección base correcta.
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4 # Esta es una herramienta especial para publicar en GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3 # Versión estable de la acción para GitHub Pages
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }} # Un token secreto para que el ayudante tenga permiso
           publish_branch: gh-pages # Publicaremos en una rama llamada 'gh-pages'
           publish_dir: ${{ env.PUBLISH_DIR }} # La carpeta 'dist' que construimos antes
           destination_dir: ${{ env.DESTINATION_DIR }} # Dónde poner los archivos en la rama 'gh-pages'
           keep_files: true # ¡Importante! No borra versiones antiguas al publicar una nueva
-          # cname: tu-dominio.com # Si tuvieras un dominio propio, lo pones aquí
+          # cname: tu-dominio.com # Si tuvieras un dominio propio, lo pones aquí  
+          
